@@ -110,7 +110,7 @@ get_prebuilts() {
 			file=$(grep "/[^/]*${ver#v}[^/]*\$" <<<"$file" | head -1)
 		fi
 		if [ -z "$file" ]; then
-			local resp asset name
+			local resp asset name upstream_note
 			resp=$(gh_req "$rv_rel" -) || return 1
 			tag_name=$(jq -r '.tag_name' <<<"$resp") || return 1
 			matches=$(jq -e '.assets | map(select(.name | (endswith("asc") or endswith("json")) | not))' <<<"$resp") || return 1
@@ -132,7 +132,8 @@ get_prebuilts() {
 			name=$(jq -r .name <<<"$asset")
 			file="${dir}/${name}"
 			gh_dl "$file" "$url" >&2 || return 1
-			echo "$tag: $(cut -d/ -f1 <<<"$src")/${name}  " >>"${cl_dir}/changelog.md"
+			upstream_note=$(release_note_asset "$tag: $(cut -d/ -f1 <<<"$src")/${name}" "$file") || return 1
+			echo "$upstream_note  " >>"${cl_dir}/changelog.md"
 		else
 			grab_cl=false
 			name=$(basename "$file")
@@ -254,6 +255,11 @@ gh_dl() {
 }
 
 log() { echo -e "$1  " >>"build.md"; }
+release_note_asset() {
+	local label=$1 digest
+	digest=$(sha256sum "$2") || return 1
+	printf '%s (sha256:%s)\n' "$label" "${digest%% *}"
+}
 get_highest_ver() {
 	local vers m
 	vers=$(tee)
@@ -712,7 +718,10 @@ build_rv() {
 			return 0
 		fi
 	fi
-	log "${table}: ${version}"
+	local upstream_apk=$stock_apk upstream_note
+	[ -f "${stock_apk}.apkm" ] && upstream_apk="${stock_apk}.apkm"
+	upstream_note=$(release_note_asset "${table}: ${version}" "$upstream_apk") || return 1
+	log "$upstream_note"
 
 	local microg_patch
 	microg_patch=$(grep "^Name: " <<<"$list_patches" | grep -i "gmscore\|microg" || :) microg_patch=${microg_patch#*: }
