@@ -5,6 +5,16 @@
 
 Get the [latest CI release](https://github.com/NoName-exe/revanced-extended/releases/latest).
 
+## Verify downloads
+
+Release APKs and modules include a GitHub build-provenance attestation. Verify a downloaded file with the [GitHub CLI](https://cli.github.com/):
+
+```sh
+gh attestation verify <downloaded-file> \
+  --repo NoName-exe/revanced-extended \
+  --signer-workflow NoName-exe/revanced-extended/.github/workflows/build.yml
+```
+
 ## Features
  * Updated with the latest versions of patches.
  * Cleans APKs from unneeded libs to make them smaller.
