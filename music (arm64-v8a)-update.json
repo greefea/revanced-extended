@@ -1,6 +1,6 @@
 {
-  "version": "v9.30.53 (patches 2.1.0.mpp)",
-  "versionCode": 6,
-  "zipUrl": "https://github.com/greefea/revanced-extended/releases/download/6/youtube-music-morphe-module-v9.30.53-arm64-v8a.zip",
+  "version": "v9.30.53 (patches 2.2.0.mpp)",
+  "versionCode": 7,
+  "zipUrl": "https://github.com/greefea/revanced-extended/releases/download/7/youtube-music-morphe-module-v9.30.53-arm64-v8a.zip",
   "changelog": "https://raw.githubusercontent.com/greefea/revanced-extended/update/build.md"
 }
